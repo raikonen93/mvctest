@@ -1,0 +1,96 @@
+﻿@using MvcTest.Models
+@model User
+
+@{ Layout = "~/Views/Shared/_Layout.cshtml";Html.EnableClientValidation(true);}
+
+    <div id="renderBody">       
+        <form id="profileForm" action="Home/ProfileForm">
+            <input type="hidden" name="Id" />
+            <table>
+                <tr>
+                    <td><p class="profileLabel">Name</p></td>
+                    <td><input id="Name" class="profileInput"  type="text" name="Name" value="@Model.Name" onblur="focusOut()" /> </td>
+                    <td><span id="namespan" style="visibility:hidden;color:red">Please correct errors!</span></td>
+                </tr>
+                <tr>
+                    <td><p class="profileLabel">Email</p></td>
+                    <td><input class="profileInput" type="text" id="Email" name="Email" value="@Model.Email" onblur="focusOut()" /> </td>
+                    <td><span id="emailspan" style="visibility:hidden;color:red">Please correct errors!</span></td>
+                </tr>
+                <tr>
+                    <td><p class="profileLabel">Skype</p></td>
+                    <td><input class="profileInput" type="text" name="Skype" id="Skype" value="@Model.Skype" onblur="focusOut()" /> </td>
+                </tr>
+                <tr>
+                    <td><p class="profileLabel">Signature</p></td>
+                    <td><input class="profileInput" type="text" name="Signature" id="Signature" value="@Model.Signature" onblur="focusOut()" /> </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+
+       $(document).ready(function () {
+           document.getElementById("profileTab").style.borderBottom = "white 2px solid";
+           document.getElementById("userRoleTab").style.borderBottom = "";
+           document.getElementById("settingsTab").style.borderBottom = "";
+           var id = "userlist" +@Model.Id;
+           document.getElementById(id).className = "active";
+           $('#usersList li:first').addClass('active');
+       });
+    function focusOut() {
+        var flag = true;
+        var name = document.getElementById('Name').value;
+        var email = document.getElementById('Email').value;
+        var skype = document.getElementById('Skype').value;
+        var signature = document.getElementById('Signature').value;
+        var re = new RegExp(/^[a-z ,.'-]+$/i);
+        if (re.test(name) && name.length > 0) {
+            document.getElementById('namespan').style.visibility = "hidden";
+        }
+        else {
+            console.log(name.length);
+            console.log(re.test(name));
+             console.log(name);
+            document.getElementById('namespan').style.visibility = "visible";
+            flag = false;
+        }
+        @{
+            string pattern = @"/\S+@\S+\.\S+/";
+        }
+
+         var reemail = new RegExp(@pattern);
+        if (reemail.test(email) && email.length>0) {
+             document.getElementById('emailspan').style.visibility = "hidden";
+        }
+        else {
+            document.getElementById('emailspan').style.visibility = "visible";
+            flag = false;
+        }
+        if (flag) {
+            var data = { id:@Model.Id,name: name, email: email, skype: skype, signature: signature };          
+       $.ajax({
+           type: "POST",
+           url: "/Home/RefreshSettings",
+           data: JSON.stringify(data),
+           contentType: "application/json; charset=utf-8",  
+           processData: false,  
+            dataType: "json",
+           success: function (data) {              
+               filtering();
+           },
+           error: function (xhr, textStatus, error) {             
+               console.log(xhr.statusText);
+               console.log(textStatus);
+               console.log(error);
+           }
+
+       });
+
+        }
+
+    }
+    </script>
+
+

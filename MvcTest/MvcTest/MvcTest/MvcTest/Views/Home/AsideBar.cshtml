@@ -1,0 +1,47 @@
+﻿@using MvcTest.Models
+@model IEnumerable<User>   
+       
+        <div id="usersList"  >
+            <table id="asideList" style="list-style:none; padding-left:10px">                
+                @foreach (User user in Model)
+                {
+                    string id = "userlist" + user.Id;
+                    <tr id="@id"><td style="cursor: pointer;"><img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(user.Avatar))" class="littlePortrait" /></td><td>@user.Name</td></tr>
+                }
+            </table>
+        </div>
+<script>
+     $('#usersList').on('mousewheel', function usersListScroll(e) {
+         if (e.originalEvent.deltaY > 0) {             
+             var elemsCount = $("#asideList > li").length + 3;
+             console.log(elemsCount);
+             var searchText = document.getElementById("search").value;
+            var disabledFontWeight = $("#disabled").css("font-weight");
+            var enabledFontWeight = $("#enabled").css("font-weight");            
+            var boldest = disabledFontWeight > enabledFontWeight ? "Disabled" : "Enabled";
+            $("#asideBar").load('@Url.Action("AsideBar", "Home")', { text: searchText, bold:boldest,elemscount: elemsCount});
+            }
+     })
+
+    $(document).ready(function() {
+        $("#usersList tr").click(function () { 
+            focusOut();
+            if (document.getElementById('namespan').style.visibility == "visible" || document.getElementById('emailspan').style.visibility == "visible") {
+                e.preventDefault();
+            }
+            var id = this.id.replace('userlist', '');
+            $("#usersList tr").removeClass('active');
+            $('#usersList tr:first').addClass('active');
+            @{ 
+                string action = "";
+                if (ViewContext.ParentActionViewContext != null)
+                {
+                   action= "/Home/" + ViewContext.ParentActionViewContext.RouteData.Values["Action"].ToString() + "/";
+                }
+             }
+            var action ='@action';
+            if(action)
+                window.location.href =action+id;            
+    });
+});
+</script>

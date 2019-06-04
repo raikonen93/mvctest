@@ -1,0 +1,95 @@
+﻿@using MvcTest.Models
+@model User
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+ }
+@{ 
+    string user = "";
+    string manager = "";
+    string admin = "";
+    string support = "";
+    if (Model.UserRole.Role == "Manager")
+    {
+        manager = "checked";
+    }
+    else if(Model.UserRole.Role == "Admin")
+    {
+        admin = "checked";
+    }
+    else if(Model.UserRole.Role == "Support"){
+        support = "checked";
+    }
+    else
+    {
+        user = "checked";
+    }
+}
+
+
+<div id="renderBody">
+    UserRole
+    <div style="padding-top:15px">        
+        <div class="radioButtonDiv">
+            @Html.RadioButtonFor(x => x.UserRole.Role, "User", new { Name = "radioGroup", user })           
+            <label class="radioButtonLabel" for="radio-1">User</label>
+        </div>
+        <div class="radioButtonDiv">
+            @Html.RadioButtonFor(x => x.UserRole.Role, "Manager", new { Name = "radioGroup", manager })           
+            <label class="radioButtonLabel" for="radio-2">Manager</label>
+        </div>
+        <div class="radioButtonDiv">
+            @Html.RadioButtonFor(x => x.UserRole.Role, "Admin", new { Name = "radioGroup", admin })
+            <label class="radioButtonLabel" for="radio-3">Admin</label>
+        </div>
+        <div class="radioButtonDiv">
+            @Html.RadioButtonFor(x => x.UserRole.Role, "Support", new { Name = "radioGroup", support })
+            <label class="radioButtonLabel" for="radio-3">Support</label>
+        </div>
+    </div>
+</div>
+<script>
+    $("input[name=radioGroup]").on("change", function()
+  {
+       
+         var data = new Object();
+        data.id = @Model.Id; 
+        data.role = $('input[name=radioGroup]:checked').val();
+
+
+        $.ajax({
+                type: "POST",
+                url: "/Home/UserRoleChanging",
+                data: data,               
+             success: function (response) {
+                 console.log('succes ajax-UserRoleChanging');
+                },               
+                error: function (jqXHR, exception) {
+                     var msg = '';
+        if (jqXHR.status === 0) {
+            msg = 'Not connect.\n Verify Network.';
+        } else if (jqXHR.status == 404) {
+            msg = 'Requested page not found. [404]';
+        } else if (jqXHR.status == 500) {
+            msg = 'Internal Server Error [500].';
+        } else if (exception === 'parsererror') {
+            msg = 'Requested JSON parse failed.';
+        } else if (exception === 'timeout') {
+            msg = 'Time out error.';
+        } else if (exception === 'abort') {
+            msg = 'Ajax request aborted.';
+        } else {
+            msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                    }
+                    console.log(msg);
+                }
+            });        
+    });
+    $(document).ready(function () {
+        document.getElementById("profileTab").style.borderBottom = "";
+        document.getElementById("userRoleTab").style.borderBottom = "white 2px solid";
+        document.getElementById("settingsTab").style.borderBottom = "";
+         var id = "userlist" +@Model.Id;
+           document.getElementById(id).className = "active";
+    });
+</script>

@@ -1,0 +1,111 @@
+﻿@using MvcTest.Models
+@model User
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="~/Content/style.css" type="text/css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Content/LayoutScript.js"></script>
+</head>
+<body >
+    <div class="layoutDiv1">
+        <div style="padding-left:10px">
+            <div style="padding-top: 10px;height: 50px;">
+                <div class="layoutDiv2" >
+                    <input id="file-input" type="file" name="name" style="display: none;" />
+                    <img id="userImage" src="~/Images/AddUser.png" onclick="newuserclick()" />
+                </div>
+                <div class="layoutDiv3" >Add User</div>
+            </div>
+            <div style="margin-top: 10px; height: 50px;">
+                <div class="searchPanel" style="height:42px "><img src="~/Images/Loop.png" /></div>
+                <div class="searchPanel" style="width: 80%;">@Html.TextBox("search", string.Empty, new { placeholder = "Search", @class = "searchinput" })</div>
+            </div>
+            <div style="height: 30px;margin-top: 10px;">
+                <input id="enabled" style="" class="transparentButton enabledButton" value="Enabled" />
+                <input id="disabled" style="font-size: 18px;" type="button" class="transparentButton" value="Disabled" />
+            </div>
+        </div>
+        <div id="asideBar" style="height: 50%; overflow: auto;">
+            @Html.Action("AsideBar", "Home")
+        </div>
+    </div>
+    <div style="float: right;width: 83%;height: 100%;">
+        <div style="background-color: dimgray;height: 30px;">
+            <ul style="text-align:center; margin:0 auto">
+                <li id="profileTab" class="pageLink" >@Html.ActionLink("Profile", "Profile", "Home", new { @class = "actionLink" })</li>
+                <li id="userRoleTab" class="pageLink">@Html.ActionLink("UserRole", "UserRole", "Home", new { id = Model.Id }, new {@class = "actionLink",id="userRoleLink" })</li>
+                <li id="settingsTab" class="pageLink">@Html.ActionLink("Settings", "Settings", "Home", new { id = Model.Id }, new { @class = "actionLink",id="userSettingsLink" })</li>
+            </ul>
+        </div>
+        <div style="background-color:gainsboro;height: calc(100% - (80px));padding-top: 50px;    padding-left: 200px;">
+            <div>
+                <div id="profileImageDiv" class="profileImageDiv">                   
+                    <img id="profileImage" src='@Url.Action("GetImage", "Home", new { id = Model.Id })' />
+                    <span class="profileImageSpan">User Image</span>
+                </div>
+                <div id="renderBody">
+                    @RenderBody()
+                </div>                
+            </div>
+        </div>
+    </div> 
+    <script>
+            $("#file-input").change(function (evt) {
+                var tgt = evt.target || window.event.srcElement,
+                files = tgt.files;
+                if (FileReader && files && files.length) {
+                var fr = new FileReader();
+                fr.onload = function () {
+                document.getElementById('profileImage').src = fr.result; }
+                fr.readAsDataURL(files[0]);
+                var formData = new FormData();
+                formData.append("image1", files[0]);
+                formData.append("id",@Model.Id );
+                $.ajax({
+                    url: '/Home/UploadFiles',
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (result) {
+                filtering();
+                },
+                error: function (jqXHR, exception) {
+                var msg = '';
+                if (jqXHR.status === 0) {
+                    msg = 'Not connect.\n Verify Network.';
+                } else if (jqXHR.status == 404) {
+                    msg = 'Requested page not found. [404]';
+                } else if (jqXHR.status == 500) {
+                    msg = 'Internal Server Error [500].';
+                } else if (exception === 'parsererror') {
+                    msg = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    msg = 'Time out error.';
+                } else if (exception === 'abort') {
+                    msg = 'Ajax request aborted.';
+                } else {
+                    msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                }
+                console.log(msg);
+            }
+            });          }
+            });
+
+            function checkErrorsOnPage(e) {
+                focusOut();
+                alert(@Model.Id);
+                if (document.getElementById('namespan').style.visibility == "visible" || document.getElementById('emailspan').style.visibility == "visible")
+                {
+                    e.preventDefault();
+                }
+                                        }
+    </script>
+</body>
+</html>

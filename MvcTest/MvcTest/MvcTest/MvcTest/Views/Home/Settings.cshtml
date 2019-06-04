@@ -1,0 +1,65 @@
+﻿@using MvcTest.Models
+@model User
+@{
+    ViewBag.Title = "Settings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="renderBody">
+<span id="stateText">Disable</span>
+<label class="switch">
+    <input id="stateCheckbox" type="checkbox">
+    <span class="slider round"></span>
+</label>
+@Html.HiddenFor(m => m.Id)
+    </div>
+<script>
+    $("#stateCheckbox").change(function () {
+        var data = new Object();
+        data.id = @Model.Id;  
+       
+        if (this.checked) {
+            data.state = 'checked';
+            document.getElementById('stateText').innerHTML= "Disable";
+          
+        }
+        else {
+            data.state = 'notchecked';  
+            document.getElementById('stateText').innerHTML= "Enable";
+        }
+         $.ajax({
+                type: "POST",
+                url: "/Home/EnabledOrDisabledChanging",
+                data: data,               
+             success: function (response) {
+                 console.log('succes ajax-EnabledOrDisabledChanging');
+                },               
+                error: function (jqXHR, exception) {
+                     var msg = '';
+        if (jqXHR.status === 0) {
+            msg = 'Not connect.\n Verify Network.';
+        } else if (jqXHR.status == 404) {
+            msg = 'Requested page not found. [404]';
+        } else if (jqXHR.status == 500) {
+            msg = 'Internal Server Error [500].';
+        } else if (exception === 'parsererror') {
+            msg = 'Requested JSON parse failed.';
+        } else if (exception === 'timeout') {
+            msg = 'Time out error.';
+        } else if (exception === 'abort') {
+            msg = 'Ajax request aborted.';
+        } else {
+            msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                    }
+                    console.log(msg);
+                }
+            });
+    });
+     $(document).ready(function () {
+        document.getElementById("profileTab").style.borderBottom = "";
+        document.getElementById("userRoleTab").style.borderBottom = "";
+        document.getElementById("settingsTab").style.borderBottom = "white 2px solid";
+          var id = "userlist" +@Model.Id;
+           document.getElementById(id).className = "active";
+    });
+</script>
+

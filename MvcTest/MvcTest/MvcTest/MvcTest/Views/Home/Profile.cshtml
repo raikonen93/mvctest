@@ -3,35 +3,36 @@
 
 @{ Layout = "~/Views/Shared/_Layout.cshtml";Html.EnableClientValidation(true);}
 
-    <div id="renderBody">       
-        <form id="profileForm" action="Home/ProfileForm">
-            <input type="hidden" name="Id" />
-            <table>
-                <tr>
-                    <td><p class="profileLabel">Name</p></td>
-                    <td><input id="Name" class="profileInput"  type="text" name="Name" value="@Model.Name" onblur="focusOut()" /> </td>
-                    <td><span id="namespan" style="visibility:hidden;color:red">Please correct errors!</span></td>
-                </tr>
-                <tr>
-                    <td><p class="profileLabel">Email</p></td>
-                    <td><input class="profileInput" type="text" id="Email" name="Email" value="@Model.Email" onblur="focusOut()" /> </td>
-                    <td><span id="emailspan" style="visibility:hidden;color:red">Please correct errors!</span></td>
-                </tr>
-                <tr>
-                    <td><p class="profileLabel">Skype</p></td>
-                    <td><input class="profileInput" type="text" name="Skype" id="Skype" value="@Model.Skype" onblur="focusOut()" /> </td>
-                </tr>
-                <tr>
-                    <td><p class="profileLabel">Signature</p></td>
-                    <td><input class="profileInput" type="text" name="Signature" id="Signature" value="@Model.Signature" onblur="focusOut()" /> </td>
-                </tr>
-            </table>
-        </form>
-    </div>
+<div id="renderBody">
+    <input type="hidden" id="Page" name="Page" value="Profile" />
+    <form id="profileForm" action="Home/ProfileForm">
+        <table>
+            <tr>
+                <td><p class="profileLabel">Name</p></td>
+                <td><input id="Name" class="profileInput" type="text" name="Name" value="@Model.Name" onblur="focusOut()" /> </td>
+                <td><span id="namespan" style="visibility:hidden;color:red">Please correct errors!</span></td>
+            </tr>
+            <tr>
+                <td><p class="profileLabel">Email</p></td>
+                <td><input class="profileInput" type="text" id="Email" name="Email" value="@Model.Email" onblur="focusOut()" /> </td>
+                <td><span id="emailspan" style="visibility:hidden;color:red">Please correct errors!</span></td>
+            </tr>
+            <tr>
+                <td><p class="profileLabel">Skype</p></td>
+                <td><input class="profileInput" type="text" name="Skype" id="Skype" value="@Model.Skype" onblur="focusOut()" /> </td>
+            </tr>
+            <tr>
+                <td><p class="profileLabel">Signature</p></td>
+                <td><input class="profileInput" type="text" name="Signature" id="Signature" value="@Model.Signature" onblur="focusOut()" /> </td>
+            </tr>
+        </table>
+    </form>
+</div>
 
     <script type="text/javascript">
 
-       $(document).ready(function () {
+        $(document).ready(function () {
+            page = 'Profile';
            document.getElementById("profileTab").style.borderBottom = "white 2px solid";
            document.getElementById("userRoleTab").style.borderBottom = "";
            document.getElementById("settingsTab").style.borderBottom = "";

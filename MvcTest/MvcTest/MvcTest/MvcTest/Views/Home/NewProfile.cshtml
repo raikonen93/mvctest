@@ -67,10 +67,12 @@
            dataType: "json",
            success: function (data) {
                var file = document.getElementById('file-input').files[0];  
-                    var fr = new FileReader();                    
-                  fr.readAsDataURL(file);
-                  var formData = new FormData();
-                  formData.append("image1", file);
+               var fr = new FileReader();  
+               var formData = new FormData();
+               if (file != null) {
+                   fr.readAsDataURL(file);
+                   formData.append("image1", file);
+               }                 
                   formData.append("id",data );
                                 $.ajax({
                       url: '/Home/UploadFiles',

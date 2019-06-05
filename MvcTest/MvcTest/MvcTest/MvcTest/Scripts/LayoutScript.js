@@ -1,8 +1,11 @@
-﻿    function newuserclick() {
+﻿var page = '';
+
+
+function newuserclick() {
         $.ajax({
             url: '/Home/NewProfile',
             success: function (data) {
-                document.getElementById('profileImage').src = '/Images/Portrait.png';
+                document.getElementById('profileImage').src = '/Images/Portrait.png';                
                 $("#renderBody").html(data);
                 $("#usersList tr").removeClass('active');
                 $("#usersList table").prepend('<tr style="cursor:pointer" id="usersList0"><td style="cursor: pointer;"><img src="/Images/Portrait.png" class="littlePortrait" /></td><td>New User</td></tr>');
@@ -12,9 +15,7 @@
     }
 
 
-        $("#profileImageDiv").click(function () {
-            document.getElementById('file-input').click();
-    });
+       
 
 function checkErrorsOnPage(e) {
         focusOut();
@@ -44,34 +45,48 @@ function AjaxError(jqXHR, exception) {
 }
 
 $(document).ready(function () {      
-    
+
+        $("#profileImageDiv").click(function () {
+            document.getElementById('file-input').click();
+        });
+
         document.getElementById('userRoleLink').addEventListener('click', function (e) {
             checkErrorsOnPage(e);
         }, false);
+
         document.getElementById('userSettingsLink').addEventListener('click', function (e) { checkErrorsOnPage(e); }, false);
         $('#search').on('input', function (e) {
             filtering();
         });
+
         $("#enabled").click(function () {
             $("#disabled").css("font-weight", "unset");
             $("#enabled").css("font-weight", "bold");
+            setCookie("bold", "Enabled");   
             filtering(false);
         });
+
         $("#disabled").click(function () {
             $("#disabled").css("font-weight", "bold");
             $("#enabled").css("font-weight", "unset");
+            setCookie("bold", "Disabled");   
             filtering(false);
         });
 });
 
 function GetCurrentPage() {
-    if (document.getElementById("profileTab").style.borderBottom == "white 2px solid") {
-        return "Profile";
-    }
-    else if (document.getElementById("userRoleTab").style.borderBottom == "white 2px solid") {
-        return "UserRole"
-    }
-    else return "Settings";    
+    return document.getElementById('Page').value; 
+}
+
+function setCookie(key, value) {
+    var expires = new Date();
+    expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+    document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+}
+
+function getCookieValue(a) {
+    var b = document.cookie.match('(^|[^;]+)\\s*' + a + '\\s*=\\s*([^;]+)');
+    return b ? b.pop() : '';
 }
 
 

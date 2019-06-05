@@ -8,13 +8,14 @@
     string checkedState= Model.IsEnabled ? "true" : "false";
 }
 <div id="renderBody">
-<span id="stateText">Disable</span>
-<label class="switch">
-    <input id="stateCheckbox" type="checkbox">
-    <span class="slider round"></span>
-</label>
-@Html.HiddenFor(m => m.Id)
-    </div>
+    <input type="hidden" id="Page" name="Page" value="Settings" />
+    <span id="stateText">Disable</span>
+    <label class="switch">
+        <input id="stateCheckbox" type="checkbox">
+        <span class="slider round"></span>
+    </label>
+    @Html.HiddenFor(m => m.Id)
+</div>
 <script>
         $("#stateCheckbox").change(function () {
             var data = new Object();
@@ -38,7 +39,8 @@
         });
 
     $(document).ready(function () {
-            document.getElementById("stateCheckbox").checked = true;
+            page = 'Settings';
+            document.getElementById("stateCheckbox").checked = @checkedState;
             document.getElementById("profileTab").style.borderBottom = "";
             document.getElementById("userRoleTab").style.borderBottom = "";
             document.getElementById("settingsTab").style.borderBottom = "white 2px solid";

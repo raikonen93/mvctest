@@ -23,6 +23,7 @@ namespace MvcTest.Controllers
 
         public ActionResult Profile(int? id)
         {
+            ViewBag.CurPage = "Profile";
             if (id == 0)
             {
                 User us = new User();
@@ -40,6 +41,7 @@ namespace MvcTest.Controllers
 
         public ActionResult UserRole(int? id)
         {
+            ViewBag.CurPage = "UserRole";
             User user = null;
             if (id == null)
                 user = context.Users.ToList().LastOrDefault();
@@ -49,6 +51,7 @@ namespace MvcTest.Controllers
         }
         public ActionResult Settings(int? id)
         {
+            ViewBag.CurPage = "Settings";
             User user = null;
             if (id == null)
                 user = context.Users.ToList().LastOrDefault();
@@ -59,12 +62,17 @@ namespace MvcTest.Controllers
 
         public ActionResult AsideBar(string elemscount, string text, string bold)
         {
+            if(elemscount==null && text==null && bold==null)
+            {                
+                text = Request.Cookies["text"]?.Value.ToString();
+                bold = Request.Cookies["bold"]?.Value.ToString();
+            }
             Helper.CheckIfImageIsEmpty(context);
             var usersList = Helper.FilteringAsideBar(elemscount, text, bold,context);
             return PartialView(usersList);
         }
 
-        public void RefreshSettings(int? id, string name,  string email, string skype, string signature)
+        public JsonResult RefreshSettings(int? id, string name,  string email, string skype, string signature)
         {
             User us;
             if (id == null || id==0)
@@ -89,7 +97,7 @@ namespace MvcTest.Controllers
                 }
             }
             context.SaveChanges();
-           
+            return Json(us.Id);
         }
 
         public JsonResult CreateNewProfile(int? id, string name, string email, string skype, string signature)

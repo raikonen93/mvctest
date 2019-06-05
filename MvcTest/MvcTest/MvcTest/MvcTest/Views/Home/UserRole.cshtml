@@ -28,14 +28,15 @@
 
 
 <div id="renderBody">
+    <input type="hidden" id="Page" name="Page" value="UserRole" />
     UserRole
-    <div style="padding-top:15px">        
+    <div style="padding-top:15px">
         <div class="radioButtonDiv">
-            @Html.RadioButtonFor(x => x.UserRole.Role, "User", new { Name = "radioGroup", user })           
+            @Html.RadioButtonFor(x => x.UserRole.Role, "User", new { Name = "radioGroup", user })
             <label class="radioButtonLabel" for="radio-1">User</label>
         </div>
         <div class="radioButtonDiv">
-            @Html.RadioButtonFor(x => x.UserRole.Role, "Manager", new { Name = "radioGroup", manager })           
+            @Html.RadioButtonFor(x => x.UserRole.Role, "Manager", new { Name = "radioGroup", manager })
             <label class="radioButtonLabel" for="radio-2">Manager</label>
         </div>
         <div class="radioButtonDiv">
@@ -66,6 +67,7 @@
     });
 
     $(document).ready(function () {
+        page = 'UserRole';
         document.getElementById("profileTab").style.borderBottom = "";
         document.getElementById("userRoleTab").style.borderBottom = "white 2px solid";
         document.getElementById("settingsTab").style.borderBottom = "";

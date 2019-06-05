@@ -81,7 +81,7 @@
                       success: function (result) {
                           filtering();
                        },
-                      error: function () {
+                      error: function (jqXHR, exception) {
                                         AjaxError(jqXHR, exception);
                                     }
                                 });

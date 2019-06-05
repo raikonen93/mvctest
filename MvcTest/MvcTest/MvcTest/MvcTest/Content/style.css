@@ -2,9 +2,11 @@
     height: 100%;
     min-height: 100%;
 }
+
 body {
     margin: 0
 }
+
 .profileInput {
     outline: none;
     border: none;
@@ -14,6 +16,7 @@ body {
 
 .profileLabel {
     text-align: right;
+    padding-right:5px;
 }
 
 .profileImageDiv {
@@ -24,22 +27,26 @@ body {
     margin-right: 70px;
     background: white;
 }
+
 #profileImage {
     height: 300px;
     width: 250px;
     position: absolute;
     z-index: 1
 }
+
 .profileImageSpan {
     margin: 0;
     position: relative;
     top: 45%;
     left: 35%;
 }
+
 .actionLink {
     color: white;
     text-decoration: none;
 }
+
 .transparentButton {
     background-color: Transparent;
     background-repeat: no-repeat;
@@ -48,6 +55,7 @@ body {
     overflow: hidden;
     outline: none;
 }
+
 .radioButtonDiv {   
     width: 100px;
     float: left;
@@ -79,10 +87,12 @@ input[type='radio']:checked:after {
     display: inline-block;
     visibility: visible;
 }
+
 .radioButtonLabel {
     margin-top: 12px;
     display: block;
 }
+
 .switch {
     position: relative;
     display: inline-block;
@@ -90,11 +100,12 @@ input[type='radio']:checked:after {
     height: 34px;
 }
 
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
 .slider {
     position: absolute;
     cursor: pointer;
@@ -107,17 +118,17 @@ input[type='radio']:checked:after {
     transition: .4s;
 }
 
-    .slider:before {
-        position: absolute;
-        content: "";
-        height: 26px;
-        width: 26px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        -webkit-transition: .4s;
-        transition: .4s;
-    }
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
 
 input:checked + .slider {
     background-color: green;
@@ -144,6 +155,7 @@ input:checked + .slider:before {
 .active {
     font-weight:bold
 }
+
 .littlePortrait {
     width: 30px;
     height: 30px;
@@ -174,42 +186,37 @@ input[type="checkbox"].input-validation-error {
 .validation-summary-valid {
     display: none;
 }
+
 .searchinput {
     background: transparent;
-    border: none;
-    /* border-bottom: 2px black solid; */
+    border: none;    
     font-size: 20px;
     height: 40px;
     width:100%;
     outline:none;
 }
-.liBlockHaupt{
 
-}
-.liBlockImage{
-
-}
-.liBlockName{
-
-}
 .layoutDiv1 {
     width: 17%;
     background-color: lightgray;
     float: left;
     height: 100%
 }
+
 .layoutDiv2 {
     height: 42px;
     width: 50px;
     float: left;
     text-align: center
 }
+
 .layoutDiv3 {
     padding-left: 10px;
     display: table-cell;
     height: 50px;
     vertical-align: middle;
 }
+
 .searchPanel {
     border-bottom:black 2px solid;
     float: left;
@@ -220,8 +227,10 @@ input[type="checkbox"].input-validation-error {
     width: 50%;
     font-size: 18px;    
 }
+
 .pageLink {
     display: inline-block;
-    padding: 5px 20px 0 0;
+    padding: 5px 0 0 0;
     color: white;
+    width: 70px;
 }

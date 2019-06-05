@@ -4,6 +4,9 @@
     ViewBag.Title = "Settings";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@{ 
+    string checkedState= Model.IsEnabled ? "true" : "false";
+}
 <div id="renderBody">
 <span id="stateText">Disable</span>
 <label class="switch">
@@ -13,53 +16,82 @@
 @Html.HiddenFor(m => m.Id)
     </div>
 <script>
-    $("#stateCheckbox").change(function () {
-        var data = new Object();
-        data.id = @Model.Id;  
-       
-        if (this.checked) {
-            data.state = 'checked';
-            document.getElementById('stateText').innerHTML= "Disable";
-          
+        $("#stateCheckbox").change(function () {
+            var data = new Object();
+            data.id = @Model.Id; 
+            if (this.checked) {
+                data.state = 'checked';
+                document.getElementById('stateText').innerHTML= "Disable";          
+            }
+            else {
+                data.state = 'notchecked';  
+                document.getElementById('stateText').innerHTML= "Enable";
+            }
+             $.ajax({
+                    type: "POST",
+                    url: "/Home/EnabledOrDisabledChanging",
+                    data: data,               
+                    success: function (response) {
+                     console.log('succes ajax-EnabledOrDisabledChanging');
+                    },               
+                    error: function (jqXHR, exception) {AjaxError(jqXHR, exception);}});
+        });
+
+    $(document).ready(function () {
+            document.getElementById("stateCheckbox").checked = true;
+            document.getElementById("profileTab").style.borderBottom = "";
+            document.getElementById("userRoleTab").style.borderBottom = "";
+            document.getElementById("settingsTab").style.borderBottom = "white 2px solid";
+            var id = "userlist" +@Model.Id;
+            document.getElementById(id).className = "active";
+        });
+
+        function focusOut() {
+            var flag = true;
+            var name = document.getElementById('Name').value;
+            var email = document.getElementById('Email').value;
+            var skype = document.getElementById('Skype').value;
+            var signature = document.getElementById('Signature').value;
+            var re = new RegExp(/^[a-z ,.'-]+$/i);
+            if (re.test(name) && name.length > 0) {
+                document.getElementById('namespan').style.visibility = "hidden";
+            }
+            else {
+                console.log(name.length);
+                console.log(re.test(name));
+                 console.log(name);
+                document.getElementById('namespan').style.visibility = "visible";
+                flag = false;
+            }
+            @{
+                string pattern = @"/\S+@\S+\.\S+/";
+            }
+
+             var reemail = new RegExp(@pattern);
+            if (reemail.test(email) && email.length>0) {
+                 document.getElementById('emailspan').style.visibility = "hidden";
+            }
+            else {
+                document.getElementById('emailspan').style.visibility = "visible";
+                flag = false;
+            }
+            if (flag) {
+                var data = { id:@Model.Id,name: name, email: email, skype: skype, signature: signature };          
+           $.ajax({
+               type: "POST",
+               url: "/Home/RefreshSettings",
+               data: JSON.stringify(data),
+               contentType: "application/json; charset=utf-8",  
+               processData: false,  
+                dataType: "json",
+               success: function (data) {              
+                   filtering();
+               },
+                error: function (jqXHR, exception) {AjaxError(jqXHR, exception);}
+           });
+
         }
-        else {
-            data.state = 'notchecked';  
-            document.getElementById('stateText').innerHTML= "Enable";
-        }
-         $.ajax({
-                type: "POST",
-                url: "/Home/EnabledOrDisabledChanging",
-                data: data,               
-             success: function (response) {
-                 console.log('succes ajax-EnabledOrDisabledChanging');
-                },               
-                error: function (jqXHR, exception) {
-                     var msg = '';
-        if (jqXHR.status === 0) {
-            msg = 'Not connect.\n Verify Network.';
-        } else if (jqXHR.status == 404) {
-            msg = 'Requested page not found. [404]';
-        } else if (jqXHR.status == 500) {
-            msg = 'Internal Server Error [500].';
-        } else if (exception === 'parsererror') {
-            msg = 'Requested JSON parse failed.';
-        } else if (exception === 'timeout') {
-            msg = 'Time out error.';
-        } else if (exception === 'abort') {
-            msg = 'Ajax request aborted.';
-        } else {
-            msg = 'Uncaught Error.\n' + jqXHR.responseText;
-                    }
-                    console.log(msg);
-                }
-            });
-    });
-     $(document).ready(function () {
-        document.getElementById("profileTab").style.borderBottom = "";
-        document.getElementById("userRoleTab").style.borderBottom = "";
-        document.getElementById("settingsTab").style.borderBottom = "white 2px solid";
-          var id = "userlist" +@Model.Id;
-           document.getElementById(id).className = "active";
-    });
+
+    }
 </script>
 

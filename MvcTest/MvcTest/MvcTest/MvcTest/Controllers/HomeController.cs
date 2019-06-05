@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using MvcTest.Helper;
+using MvcTest.Helpers;
 using System.IO;
+
 
 namespace MvcTest.Controllers
 {
@@ -27,22 +28,48 @@ namespace MvcTest.Controllers
                 User us = new User();
                 return PartialView("NewProfile",us);
             }
-            Helper.Helper.CheckIfImageIsEmpty(context);
+            Helper.CheckIfImageIsEmpty(context);
             User user = null;
             if(id==null)
-            user = context.Users.ToList().LastOrDefault();
+            user = context.Users.Where(t=>t.IsEnabled).ToList().LastOrDefault();
             else
                 user = context.Users.Where(t=>t.Id==id).ToList().FirstOrDefault();
 
             return View(user);
         }
-        
+
+        public ActionResult UserRole(int? id)
+        {
+            User user = null;
+            if (id == null)
+                user = context.Users.ToList().LastOrDefault();
+            else
+                user = context.Users.Where(t => t.Id == id).ToList().FirstOrDefault();
+            return View(user);
+        }
+        public ActionResult Settings(int? id)
+        {
+            User user = null;
+            if (id == null)
+                user = context.Users.ToList().LastOrDefault();
+            else
+                user = context.Users.Where(t => t.Id == id).ToList().FirstOrDefault();
+            return View(user);
+        }
+
+        public ActionResult AsideBar(string elemscount, string text, string bold)
+        {
+            Helper.CheckIfImageIsEmpty(context);
+            var usersList = Helper.FilteringAsideBar(elemscount, text, bold,context);
+            return PartialView(usersList);
+        }
+
         public void RefreshSettings(int? id, string name,  string email, string skype, string signature)
         {
             User us;
             if (id == null || id==0)
             {
-                 us= new User { Name = name, Email = email, Skype = skype, Signature = signature, UserRole = new UserRole { Role = Roles.User.ToString() }, IsEnabled = true };
+                us= new User { Name = name, Email = email, Skype = skype, Signature = signature, UserRole = new UserRole { Role = Roles.User.ToString() }, IsEnabled = true };
                 if (us.Avatar == null)
                 {
                     string path = AppDomain.CurrentDomain.BaseDirectory + @"\\Images\\Portrait.png";
@@ -93,67 +120,13 @@ namespace MvcTest.Controllers
             return Json(us.Id);
         }
 
-        public ActionResult UserRole(int? id)
-        {            
-            User user = null;
-            if (id == null)
-                user = context.Users.ToList().LastOrDefault();
-            else
-                user = context.Users.Where(t => t.Id == id).ToList().FirstOrDefault();
-            return View(user);
-        }
-        public ActionResult Settings(int? id)
-        {
-            ViewBag.CurrentPage = "Settings";
-            User user = null;
-            if (id == null)
-                user = context.Users.ToList().LastOrDefault();
-            else
-                user = context.Users.Where(t => t.Id == id).ToList().FirstOrDefault();
-            return View(user);
-        }
-
-        public ActionResult AsideBar(string elemscount, string text, string bold)
-        {
-            var usersList = FilteringAsideBar(elemscount, text, bold);
-
-           Helper.Helper.CheckIfImageIsEmpty(context);
-            return PartialView(usersList);
-        }
-        [HttpPost]
-        public ActionResult ProfileForm()
-        {
-            return View();
-        }
-
         public ActionResult Searching(string elemscount, string text, string bold)
         {
-            var usersList = FilteringAsideBar(elemscount,text, bold);
+            var usersList = Helper.FilteringAsideBar(elemscount,text, bold,context);
             return PartialView("AsideBar",usersList);
         }
 
-        public List<User> FilteringAsideBar(string elemscount,string text, string bold)
-        {
-
-            bool state;
-            int visibleUsersCount = 15;
-            if (bold == null)
-                state = true;
-            else
-                state = bold == "Enabled" ? true : false;
-           
-            if (!string.IsNullOrEmpty(elemscount) && elemscount!="0")
-                visibleUsersCount = int.Parse(elemscount);
-
-            List<User> usersList;
-            
-            if (!string.IsNullOrEmpty(text))
-               return usersList = context.Users.Where(t => (t.Name.ToUpper().Contains(text.ToUpper()) && (t.IsEnabled == state))).Take(visibleUsersCount).OrderByDescending(t=>t.Id).ToList();
-            else
-            {
-               return usersList = context.Users.Where(t => t.IsEnabled == state).Take(visibleUsersCount).OrderByDescending(t => t.Id).ToList();
-            }
-        }
+       
 
         public ActionResult GetImage(int id)
         {
@@ -170,18 +143,15 @@ namespace MvcTest.Controllers
                 imageData = user.Avatar;
             }
             context.SaveChanges();
-            //instead of what augi wrote using the binarystreamresult this was the closest thing i found so i am assuming that this is what it evolved into 
             return new FileStreamResult(new System.IO.MemoryStream(imageData), "image/jpeg");
         }
 
-        public void UploadFiles(int id)
-        {
-            // Checking no of files injected in Request object  
+        public void UploadFiles(int? id)
+        {            
             if (Request.Files.Count > 0)
             {
                 try
-                {
-                    //  Get all files from Request object  
+                {                   
                     HttpFileCollectionBase files = Request.Files;
 
                     var file = files[0];
@@ -196,6 +166,8 @@ namespace MvcTest.Controllers
                         }
                         data = memoryStream.ToArray();
                     }
+                    if (id == null)
+                        return;
                     var user = context.Users.Where(t => t.Id == id).FirstOrDefault();
                     if (user != null)
                         user.Avatar = data;
@@ -208,7 +180,6 @@ namespace MvcTest.Controllers
                 }
             }           
         }
-
 
         public void EnabledOrDisabledChanging(string id,string state)
         {
@@ -225,6 +196,7 @@ namespace MvcTest.Controllers
                 }
             }
         }
+
         public void UserRoleChanging(string id, Roles role)
         {
             if (!string.IsNullOrEmpty(id))

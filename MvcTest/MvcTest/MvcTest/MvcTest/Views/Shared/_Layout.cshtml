@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
     <link href="~/Content/style.css" type="text/css" rel="stylesheet" />
-    <script src="~/Scripts/jquery-3.4.1.js"></script>
-    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
-    <script src="~/Scripts/jquery.validate.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
-    <script src="~/Content/LayoutScript.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/LayoutScript.js"></script>
 </head>
 <body >
     <div class="layoutDiv1">
@@ -31,7 +31,7 @@
                 <input id="disabled" style="font-size: 18px;" type="button" class="transparentButton" value="Disabled" />
             </div>
         </div>
-        <div id="asideBar" style="height: 50%; overflow: auto;">
+        <div id="asideBar" style="height: 75%; overflow: auto;">
             @Html.Action("AsideBar", "Home")
         </div>
     </div>
@@ -76,36 +76,20 @@
                 success: function (result) {
                 filtering();
                 },
-                error: function (jqXHR, exception) {
-                var msg = '';
-                if (jqXHR.status === 0) {
-                    msg = 'Not connect.\n Verify Network.';
-                } else if (jqXHR.status == 404) {
-                    msg = 'Requested page not found. [404]';
-                } else if (jqXHR.status == 500) {
-                    msg = 'Internal Server Error [500].';
-                } else if (exception === 'parsererror') {
-                    msg = 'Requested JSON parse failed.';
-                } else if (exception === 'timeout') {
-                    msg = 'Time out error.';
-                } else if (exception === 'abort') {
-                    msg = 'Ajax request aborted.';
-                } else {
-                    msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                    error: function (jqXHR, exception) { AjaxError(jqXHR, exception); }
+                });
                 }
-                console.log(msg);
-            }
-            });          }
             });
 
-            function checkErrorsOnPage(e) {
-                focusOut();
-                alert(@Model.Id);
-                if (document.getElementById('namespan').style.visibility == "visible" || document.getElementById('emailspan').style.visibility == "visible")
-                {
-                    e.preventDefault();
-                }
-                                        }
+        function filtering(flag) {
+        var elemsCount = document.getElementById("asideList").getElementsByTagName("tr").length;
+        if (!flag)
+        elemsCount = 0;
+        var searchText = document.getElementById("search").value;
+        var disabledFontWeight = $("#disabled").css("font-weight");
+        var enabledFontWeight = $("#enabled").css("font-weight");
+        var boldest = disabledFontWeight > enabledFontWeight ? "Disabled" : "Enabled";
+        $("#asideBar").load('@Url.Action("Searching","Home")', { text: searchText, bold: boldest, elemscount: elemsCount })}
     </script>
 </body>
 </html>

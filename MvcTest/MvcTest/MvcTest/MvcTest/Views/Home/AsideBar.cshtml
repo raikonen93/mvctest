@@ -6,16 +6,16 @@
                 @foreach (User user in Model)
                 {
                     string id = "userlist" + user.Id;
-                    <tr id="@id"><td style="cursor: pointer;"><img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(user.Avatar))" class="littlePortrait" /></td><td>@user.Name</td></tr>
+                    <tr id="@id" style="cursor:pointer"><td style="cursor: pointer;"><img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(user.Avatar))" class="littlePortrait" /></td><td>@user.Name</td></tr>
                 }
             </table>
         </div>
 <script>
      $('#usersList').on('mousewheel', function usersListScroll(e) {
          if (e.originalEvent.deltaY > 0) {             
-             var elemsCount = $("#asideList > li").length + 3;
-             console.log(elemsCount);
-             var searchText = document.getElementById("search").value;
+            var elemsCount = document.getElementById("asideList").getElementsByTagName("tr").length;
+            console.log(elemsCount);
+            var searchText = document.getElementById("search").value;
             var disabledFontWeight = $("#disabled").css("font-weight");
             var enabledFontWeight = $("#enabled").css("font-weight");            
             var boldest = disabledFontWeight > enabledFontWeight ? "Disabled" : "Enabled";
@@ -23,25 +23,28 @@
             }
      })
 
-    $(document).ready(function() {
-        $("#usersList tr").click(function () { 
-            focusOut();
-            if (document.getElementById('namespan').style.visibility == "visible" || document.getElementById('emailspan').style.visibility == "visible") {
-                e.preventDefault();
-            }
-            var id = this.id.replace('userlist', '');
-            $("#usersList tr").removeClass('active');
-            $('#usersList tr:first').addClass('active');
-            @{ 
-                string action = "";
-                if (ViewContext.ParentActionViewContext != null)
-                {
-                   action= "/Home/" + ViewContext.ParentActionViewContext.RouteData.Values["Action"].ToString() + "/";
+    $(document).ready(function () {            
+            $("#usersList tr").removeClass('active');            
+            $("#usersList tr").click(function () { 
+                
+                if (document.getElementById('namespan').style.visibility == "visible" || document.getElementById('emailspan').style.visibility == "visible") {
+                    e.preventDefault();
                 }
-             }
-            var action ='@action';
-            if(action)
-                window.location.href =action+id;            
-    });
+                var id = this.id.replace('userlist', '');           
+                @*@{ 
+                    string action = "";
+                    if (ViewContext.ParentActionViewContext != null)
+                    {
+                       action= "/Home/" + ViewContext.ParentActionViewContext.RouteData.Values["Action"].ToString() + "/";
+                    }
+                 }*@
+
+                $("#usersList tr").removeClass('active');
+                var action = GetCurrentPage();
+                console.log(action + id);
+                if(action)
+                    window.location.href ='Home/'+action+'/'+id;            
+                });
+           
 });
 </script>
